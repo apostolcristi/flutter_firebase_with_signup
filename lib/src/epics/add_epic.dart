@@ -1,13 +1,13 @@
+import 'package:flutter_firebase_with_signup/src/actions/create_user.dart';
 import 'package:flutter_firebase_with_signup/src/actions/get_current_user.dart';
 import 'package:flutter_firebase_with_signup/src/actions/get_movies.dart';
 import 'package:flutter_firebase_with_signup/src/actions/index.dart';
 import 'package:flutter_firebase_with_signup/src/actions/login.dart';
+import 'package:flutter_firebase_with_signup/src/data/auth_api.dart';
 import 'package:flutter_firebase_with_signup/src/data/movie_api.dart';
 import 'package:flutter_firebase_with_signup/src/models/app_state.dart';
 import 'package:redux_epics/redux_epics.dart';
 import 'package:rxdart/rxdart.dart';
-
-import '../data/auth_api.dart';
 
 class AppEpic {
   AppEpic(this._movieApi, this._authApi);
@@ -19,7 +19,8 @@ class AppEpic {
     return combineEpics(<Epic<AppState>>[
       TypedEpic<AppState, GetMoviesStart>(_getMovies),
       TypedEpic<AppState, LoginStart>(_loginStart),
-      TypedEpic<AppState, GetCurrentUserStart>(_getCurrentUserStart)
+      TypedEpic<AppState, GetCurrentUserStart>(_getCurrentUserStart),
+      TypedEpic<AppState, CreateUserStart>(_createUserStart)
     ]);
   }
 
@@ -44,11 +45,21 @@ class AppEpic {
   }
 
   Stream<AppAction> _getCurrentUserStart(Stream<GetCurrentUserStart> actions, EpicStore<AppState> store) {
-    return actions.flatMap((action) {
+    return actions.flatMap((GetCurrentUserStart action) {
       return Stream<void>.value(null)
           .asyncMap((_) => _authApi.getCurrentUser())
           .map(GetCurrentUser.successful)
           .onErrorReturnWith(GetCurrentUser.error);
+    });
+  }
+
+  Stream<AppAction> _createUserStart(Stream<CreateUserStart> actions, EpicStore<AppState> store) {
+    return actions.flatMap((CreateUserStart action) {
+      return Stream<void>.value(null)
+          .asyncMap((_) => _authApi.create(email: action.email, password: action.password, username: action.username))
+          .map(CreateUser.successful)
+          .onErrorReturnWith(CreateUser.error)
+          .doOnData(action.onResult);
     });
   }
 }

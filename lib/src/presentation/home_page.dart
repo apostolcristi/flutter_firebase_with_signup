@@ -26,7 +26,7 @@ class _HomePageState extends State<HomePage> {
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('page loaded succesfull')));
       } else if (action is GetMoviesError) {
         final Object error = action.error;
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('An error has occured ${error}')));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('An error has occured $error')));
       }
     }
   }

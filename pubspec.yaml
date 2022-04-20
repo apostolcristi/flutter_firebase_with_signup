@@ -36,9 +36,10 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   freezed: ^1.1.1
+  json_serializable: ^6.1.6
   very_good_analysis: ^2.4.0
 
 
-  json_serializable: ^6.1.6
+
 
   # see https://flutter.dev/custom-fonts/#from-packages
